@@ -1,5 +1,6 @@
 const SAMPLE_NAMES = "Name1\nName2\nName3\nName4\nName5\nName6\nName7\nName8\nName9\nName10";
 const SAMPLE_PAIRS = "Name1,Name2,Name3,Name4\nName5,Name6,Name7,Name8";
+var csv = null;
 
 window.onload = function() {
     const namesBox = document.getElementById('names');
@@ -65,9 +66,15 @@ function onButtonClick() {
         nameIndexes.push(nameIndexes.shift());
         allMeetings.push(meetings);
     }
+    allMeetings.sort((a,b) => b.length - a.length);
 
     /** Print output */
-    let csv = ""
+    csv = "";
+    for (let i = 0; i < numRounds; i++) {
+        csv += `Week ${i+1},`;
+        if (i < numRounds - 1) csv += ",";
+    }
+    csv += "\n";
     for (let i = 0; i < allMeetings[0].length; i++) {
         for (let j = 0; j < allMeetings.length; j++) {
             if (i >= allMeetings[j].length) {
@@ -81,7 +88,19 @@ function onButtonClick() {
         }
         csv += "\n";
     }
-    console.log(csv);
     const outputBox = document.getElementById('output');
     outputBox.value = csv;
+}
+
+function downloadOutput() {
+    if (csv === null) {
+        return;
+    }
+
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    hiddenElement.target = '_blank';
+
+    hiddenElement.download = 'Schedule.csv';
+    hiddenElement.click();
 }
