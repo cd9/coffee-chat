@@ -5,7 +5,7 @@ var csv = null;
 window.onload = function() {
     const namesBox = document.getElementById('names');
     namesBox.value = SAMPLE_NAMES;
-    const pairsBox = document.getElementById('history');
+    const pairsBox = document.getElementById('banned');
     pairsBox.value = SAMPLE_PAIRS;
 }
 
@@ -24,7 +24,7 @@ function onButtonClick() {
     }
 
     /** Convert CSV into 2D array */
-    const historyElement = document.getElementById('history');
+    const historyElement = document.getElementById('banned');
     const rawRows = historyElement.value.split("\n");
     const rows = [];
     for (let i = 0; i < rawRows.length; i++) {

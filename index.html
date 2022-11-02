@@ -33,16 +33,14 @@
 
 <body>
     <center>
-        <h1>Coffee Chat</h1>
+        <h1>Round Robin Scheduler</h1>
         <span class="title">Usage:</span>
 	<p>
         1. Input names into <b>List of People</b>. One name per line.<br><br>
-        2. Input comma-seperated pairs of past pairs into <b>Table of Past Meetings</b>. Follow the example format (exporting a spreadsheet to CSV matches this format).<br><br>
-        3. Click generate to generate a unique list of pairs<br><br>
+        2. Input comma-seperated list of banned pairings into <b>Table of Banned Pairings</b>.<br>Follow the example format (exporting a spreadsheet to CSV matches this format).<br><br>
+        3. Click generate to generate a round robin schedule.<br><br>
+        <i>If the list of people is odd, one person will remain unpaired per round.</i>
         </p>
-        <span class="title">Notes:</span>
-	<p>
-        - This tool does not support triplets. If the list of names is odd then the extra person will be appended onto the first pair.
         </p>
         <br>
         <span class="title">List of People</span>
@@ -51,20 +49,21 @@
 	</textarea>
         <br>
         <br>
-        <span class="title">Table of Past Meetings</span>
+        <span class="title">Table of Banned Pairings</span>
         <br>
-        <textarea id="history" type="text" rows=10 cols=100>
+        <textarea id="banned" type="text" rows=10 cols=100>
 	</textarea>
         <br>
         <br>
 	<button onclick="onButtonClick()">Generate Pairs</button>
-	<button onclick="downloadOutput()">Download Output</button>
+	<button onclick="downloadOutput()">Download as CSV</button>
         <br>
         <br>
         <span class="title">Output</span>
         <br>
         <textarea id="output" type="text" rows=10 cols=120>
 	</textarea>
+        <div class="outputTable"></div>
     </center>
 </body>
 
