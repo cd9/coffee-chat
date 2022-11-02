@@ -73,12 +73,9 @@ function onButtonClick() {
      */
     let filteredPairs = new Set(uniquePairs.filter(x => !bannedPairs.has(x)));
     let selectedPairs = []
-    console.log(filteredPairs)
     for (let i = 0; i < uniqueNames.length / 2; i++) {
         const randomPair = pickRandom(filteredPairs)
-        console.log(randomPair)
         filteredPairs = filterSet(filteredPairs, randomPair)
-        console.log(filteredPairs)
         selectedPairs.push(randomPair);
     }
     if (extraName !== "") {
