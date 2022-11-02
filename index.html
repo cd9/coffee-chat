@@ -1,0 +1,60 @@
+<html>
+<head>
+    <style>
+        body {
+            font-family: monospace;
+        }
+
+        div.floating {
+            display: inline-block;
+        }
+
+        input {
+            text-align: center;
+        }
+
+        span.title {
+            font-weight: bold;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid;
+            text-align: center;
+        }
+
+        table {
+            width: 75%
+        }
+    </style>
+    <script src = "script.js"></script>
+</head>
+
+<body>
+    <center>
+        <h1>Coffee Chat</h1>
+        <span class="title">List of People</span>
+        <br>
+        <textarea id="names" type="text" rows=10 cols=20>
+	</textarea>
+        <br>
+        <br>
+        <span class="title">Table of Past Meetings</span>
+        <br>
+        <textarea id="history" type="text" rows=10 cols=100>
+	</textarea>
+        <br>
+        <br>
+        <span class="title">Output</span>
+        <br>
+        <textarea id="output" type="text" rows=10 cols=40>
+	</textarea>
+        <br>
+        <br>
+	<button onclick="onButtonClick()">Generate Pairs</button>
+        <br>
+    </center>
+</body>
+
+</html>
