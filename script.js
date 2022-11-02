@@ -1,6 +1,5 @@
-const SAMPLE_NAMES = "First0 Last\nFirst1 Last\nFirst2 Last\nFirst3 Last\nFirst4 Last\nFirst5 Last";
-const SAMPLE_PAIRS = "Week1,,Week2,\nAlice Alice,Bob Bob,Alice Alice,Bob Bob\nAlice Alice,Bob Bob,Alice Alice,Bob Bob";
-const DELIMITER = ",";
+const SAMPLE_NAMES = "Name1\nName2\nName3\nName4\nName5\nName6\nName7\nName8\nName9\nName10";
+const SAMPLE_PAIRS = "Name1,Name2,Name3,Name4\nName5,Name6,Name7,Name8";
 
 window.onload = function() {
     const namesBox = document.getElementById('names');
@@ -9,25 +8,9 @@ window.onload = function() {
     pairsBox.value = SAMPLE_PAIRS;
 }
 
-/** Sorts a pair */
-function getSortedPair(name1, name2) {
-    var names = [name1, name2]
-    names.sort()
-    return names[0] + DELIMITER + names[1]
-}
-
 /** Picks a random element from a set*/
 function pickRandom(set) {
     return [...set][Math.floor(Math.random() * set.size)];
-}
-
-/** Filters a set to not include any individual elements of a pair*/
-function filterSet(set, pair) {
-    individuals = pair.split(DELIMITER)
-    return new Set([...set]
-        .filter(x => !(
-            x.includes(individuals[0]) ||
-            x.includes(individuals[1]))))
 }
 
 function onButtonClick() {
@@ -35,18 +18,8 @@ function onButtonClick() {
     /** Get all unique names */
     const namesElement = document.getElementById('names');
     const namesList = namesElement.value.split("\n");
-    var extraName = ""
     if (namesList.length % 2 !== 0) {
-        extraName = namesList.pop()
-    }
-    var uniqueNames = [...new Set(namesList)];
-
-    /** Generate unique pairs */
-    const uniquePairs = [];
-    for (let i = 0; i < uniqueNames.length; i++) {
-        for (let j = i + 1; j < uniqueNames.length; j++) {
-            uniquePairs.push(getSortedPair(uniqueNames[i], uniqueNames[j]));
-        }
+        namesList.push(null)
     }
 
     /** Convert CSV into 2D array */
@@ -61,28 +34,54 @@ function onButtonClick() {
     const bannedPairs = new Set();
     for (let i = 0; i < rows.length; i++) {
         for (let j = 0; j < rows[0].length; j += 2) {
-            const sortedPair = getSortedPair(rows[i][j], rows[i][j + 1])
-            bannedPairs.add(sortedPair);
+            const pair = [rows[i][j], rows[i][j + 1]]
+            pair.sort()
+            bannedPairs.add(pair + "");
         }
     }
+    console.log(bannedPairs);
 
-    /** 
-     * 1. Pick a random pair
-     * 2. Re-filter set of pairs
-     * 3. Repeat
-     */
-    let filteredPairs = new Set(uniquePairs.filter(x => !bannedPairs.has(x)));
-    let selectedPairs = []
-    for (let i = 0; i < uniqueNames.length / 2; i++) {
-        const randomPair = pickRandom(filteredPairs)
-        filteredPairs = filterSet(filteredPairs, randomPair)
-        selectedPairs.push(randomPair);
-    }
-    if (extraName !== "") {
-        selectedPairs[0] += " and " + extraName
+    /** Round-robin tournament algorithm */
+    const numNames = namesList.length;
+    const numRounds = numNames - 1;
+    const half = numNames / 2;
+
+    const allMeetings = [];
+    const nameIndexes = namesList.map((_, i) => i).slice(1);
+
+    for (let round = 0; round < numRounds; round++) {
+        const meetings = [];
+        const newNameIndexes = [0].concat(nameIndexes);
+        const firstHalf = newNameIndexes.slice(0, half);
+        const secondHalf = newNameIndexes.slice(half, numNames).reverse();
+        for (let i = 0; i < firstHalf.length; i++) {
+            meeting = [namesList[firstHalf[i]], namesList[secondHalf[i]]]
+            meeting.sort()
+            if (bannedPairs.has(meeting + "")) {
+                continue;
+            }
+            meetings.push(meeting);
+        }
+        nameIndexes.push(nameIndexes.shift());
+        allMeetings.push(meetings);
     }
 
     /** Print output */
+    let csv = ""
+    for (let i = 0; i < allMeetings[0].length; i++) {
+        for (let j = 0; j < allMeetings.length; j++) {
+            if (i >= allMeetings[j].length) {
+                csv += ",,";
+                continue;
+            }
+            csv += allMeetings[j][i] + "";
+            if (j < allMeetings.length - 1) {
+                csv += ",";
+            }
+        }
+        csv += "\n";
+    }
+    console.log(csv);
     const outputBox = document.getElementById('output');
-    output.value = selectedPairs.join('\n')
+    outputBox.value = csv;
 }
