@@ -9,49 +9,83 @@ window.onload = function() {
     pairsBox.value = SAMPLE_PAIRS;
 }
 
+/** Sorts a pair */
 function getSortedPair(name1, name2) {
     var names = [name1, name2]
     names.sort()
     return names[0] + DELIMITER + names[1]
 }
 
+/** Picks a random element from a set*/
+function pickRandom(set) {
+    return [...set][Math.floor(Math.random() * set.size)];
+}
+
+/** Filters a set to not include any individual elements of a pair*/
+function filterSet(set, pair) {
+    individuals = pair.split(DELIMITER)
+    return new Set([...set]
+        .filter(x => !(
+            x.includes(individuals[0]) ||
+            x.includes(individuals[1]))))
+}
+
 function onButtonClick() {
+
+    /** Get all unique names */
     const namesElement = document.getElementById('names');
     const namesList = namesElement.value.split("\n");
-    const uniqueNames = [...new Set(namesList)];
+    var extraName = ""
+    if (namesList.length % 2 !== 0) {
+        extraName = namesList.pop()
+    }
+    var uniqueNames = [...new Set(namesList)];
 
+    /** Generate unique pairs */
     const uniquePairs = [];
-    for (var i = 0; i < uniqueNames.length; i++) {
-        for (var j = i + 1; j < uniqueNames.length; j++) {
+    for (let i = 0; i < uniqueNames.length; i++) {
+        for (let j = i + 1; j < uniqueNames.length; j++) {
             uniquePairs.push(getSortedPair(uniqueNames[i], uniqueNames[j]));
         }
     }
 
+    /** Convert CSV into 2D array */
     const historyElement = document.getElementById('history');
-    const historyLines = historyElement.value.split("\n");
-    const formattedLines = [];
-    for (var i = 0; i < historyLines.length; i++) {
-        formattedLines.push(historyLines[i].split(','));
+    const rawRows = historyElement.value.split("\n");
+    const rows = [];
+    for (let i = 0; i < rawRows.length; i++) {
+        rows.push(rawRows[i].split(','));
     }
 
-    const usedPairs = [];
-    const weeks = formattedLines[0].length / 2;
-    for (var i = 1; i < formattedLines.length; i++) {
-        for (var j = 0; j < weeks * 2; j += 2) {
-            usedPairs.push(getSortedPair(formattedLines[i][j], formattedLines[i][j + 1]));
+    /** Get a list of banned pairs */
+    const bannedPairs = new Set();
+    for (let i = 0; i < rows.length; i++) {
+        for (let j = 0; j < rows[0].length; j += 2) {
+            const sortedPair = getSortedPair(rows[i][j], rows[i][j + 1])
+            bannedPairs.add(sortedPair);
         }
     }
 
-    const usedPairsSet = new Set(usedPairs);
-    var filteredPairs = new Set(uniquePairs.filter(x => !usedPairsSet.has(x)));
-    const selectedPairs = []
-    for (var i = 0; i < uniqueNames.length / 2; i++) {
-        const randomPair = [...filteredPairs][Math.floor(Math.random() * filteredPairs.size)];
-        people = randomPair.split(DELIMITER)
-        filteredPairs = new Set([...filteredPairs].filter(x => !(x.includes(people[0]) || x.includes(people[1]))))
+    /** 
+     * 1. Pick a random pair
+     * 2. Re-filter set of pairs
+     * 3. Repeat
+     */
+    let filteredPairs = new Set(uniquePairs.filter(x => !bannedPairs.has(x)));
+    let selectedPairs = []
+    console.log(filteredPairs)
+    for (let i = 0; i < uniqueNames.length / 2; i++) {
+        const randomPair = pickRandom(filteredPairs)
+        console.log(randomPair)
+        filteredPairs = filterSet(filteredPairs, randomPair)
+        console.log(filteredPairs)
         selectedPairs.push(randomPair);
     }
+    if (extraName !== "") {
+        selectedPairs[0] += " and " + extraName
+    }
 
+    /** Print output */
     const outputBox = document.getElementById('output');
     output.value = selectedPairs.join('\n')
 }

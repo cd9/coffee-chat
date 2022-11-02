@@ -34,6 +34,17 @@
 <body>
     <center>
         <h1>Coffee Chat</h1>
+        <span class="title">Usage:</span>
+	<p>
+        1. Input names into <b>List of People</b>. One "First Last" name per line.<br><br>
+        2. Input comma-seperated pairs of past pairs into <b>Table of Past Meetings</b>. Follow the example format (exporting a spreadsheet to CSV matches this format).<br><br>
+        3. Click generate to generate a unique list of pairs<br><br>
+        </p>
+        <span class="title">Notes:</span>
+	<p>
+        - This tool does not support triplets. If the list of names is odd then the extra person will be appended onto the first pair.
+        </p>
+        <br>
         <span class="title">List of People</span>
         <br>
         <textarea id="names" type="text" rows=10 cols=20>
